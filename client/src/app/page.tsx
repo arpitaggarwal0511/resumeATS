@@ -15,10 +15,11 @@ export default function Home() {
     formData.append("file", file);
 
     try {
-      const res = await fetch("http://localhost:8000/analyze", {
-        method: "POST",
-        body: formData,
-      });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/analyze`, {
+    method: "POST",
+    body: formData,
+  });
+
 
       const data = await res.json();
       setResult(data);
