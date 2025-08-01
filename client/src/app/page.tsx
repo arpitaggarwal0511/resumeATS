@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -15,7 +17,7 @@ export default function Home() {
     formData.append("file", file);
 
     try {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/analyze`, {
+  const res = await fetch(`${backendURL}/analyze`, {
     method: "POST",
     body: formData,
   });
