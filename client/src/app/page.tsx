@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
-const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+import { useState, ChangeEvent } from "react";
 
+const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<any>(null); // Keep this 'any' if your backend response varies
 
   const handleSubmit = async () => {
     if (!file) return;
@@ -17,15 +17,14 @@ export default function Home() {
     formData.append("file", file);
 
     try {
-  const res = await fetch(`${backendURL}/analyze`, {
-    method: "POST",
-    body: formData,
-  });
-
+      const res = await fetch(`${backendURL}/analyze`, {
+        method: "POST",
+        body: formData,
+      });
 
       const data = await res.json();
       setResult(data);
-    } catch (error) {
+    } catch {
       alert("Something went wrong. Try again.");
     }
 
@@ -38,10 +37,18 @@ export default function Home() {
     return "bg-red-100 text-red-800";
   };
 
-  const renderContent = (val: any) => {
+  const renderContent = (val: unknown): string => {
     if (typeof val === "string") return val;
-    if (typeof val === "object" && val?.content) return val.content;
-    return JSON.stringify(val); // fallback for debugging
+    if (typeof val === "object" && val && "content" in val) {
+      const content = (val as { content: string }).content;
+      return content;
+    }
+    return JSON.stringify(val, null, 2);
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile(selectedFile);
   };
 
   return (
@@ -55,7 +62,7 @@ export default function Home() {
         <input
           type="file"
           accept=".pdf"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          onChange={handleFileChange}
           className="w-full border border-gray-300 rounded px-3 py-2 bg-white"
         />
 
@@ -68,20 +75,15 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Results */}
       {result && (
         <div className="mt-10 w-full max-w-4xl bg-white p-6 rounded-lg shadow space-y-6">
-          {/* ATS Score */}
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold">ATS Score</h2>
-            <span
-              className={`text-lg font-bold px-4 py-1 rounded-full ${getScoreColor(result.ats_score)}`}
-            >
+            <span className={`text-lg font-bold px-4 py-1 rounded-full ${getScoreColor(result.ats_score)}`}>
               {result.ats_score} / 100
             </span>
           </div>
 
-          {/* Sections */}
           {result.llm_analysis?.sections && (
             <div>
               <h3 className="text-xl font-semibold mb-2">📂 Resume Sections</h3>
@@ -96,7 +98,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* LLM Analysis */}
           {result.llm_analysis?.analysis && (
             <div>
               <h3 className="text-xl font-semibold mb-2">🧠 Section-wise Analysis</h3>
@@ -111,7 +112,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* Suggestions */}
           {result.llm_analysis?.suggestions?.length > 0 && (
             <div>
               <h3 className="text-xl font-semibold mb-2">✅ Suggestions to Improve</h3>
