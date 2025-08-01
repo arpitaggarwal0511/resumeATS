@@ -10,7 +10,7 @@ A full-stack web app to parse PDF resumes, extract structured sections, analyze 
 
 ---
 
-🌐 **Live Project:** [https://your-app.vercel.app]([https://your-app.vercel.app](https://resume-ats-zeta.vercel.app/))
+🌐 **Live Project:** [https://resume-ats-zeta.vercel.app](https://resume-ats-zeta.vercel.app)
 
 ---
 
