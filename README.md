@@ -56,7 +56,7 @@ npm run dev
 
 ```bash
 cd server
-pip install -r requirements.txt
+pip install -r req.txt
 
 # Setup your API key
 echo "GEMINI_API_KEY=your-gemini-api-key" > .env
