@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, ChangeEvent } from "react";
+import Footer from "./Footer";
 
 const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
@@ -124,6 +125,10 @@ export default function Home() {
           )}
         </div>
       )}
+
+      <>
+        <Footer/>
+      </>
     </main>
   );
 }
